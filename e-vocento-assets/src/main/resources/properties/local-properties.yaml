@@ -1,0 +1,30 @@
+##############################################
+##  EXP ASSETS
+##############################################
+api:
+  http:
+    port: "8090"
+    protocol: "HTTPS"
+    
+##############################################
+##  RabbitMq
+##############################################
+### COMMON CONFIGS
+commonconfig:
+###RABBIT MQ
+  rabbit:
+    host: "localhost"
+    port: "5672"
+    virtualhost: "/salesforce"
+    user: "sf"
+    password: "![YQIDDy1b5FcNS3io9ndOZQ==]"
+    reconnectionfrequency: "2000"
+    reconnectionattempts: "20"
+    fallback:
+      host: "premq.vocento.in"
+      port: "5672"
+    prefetch:
+     count:  "5"
+     size: "0"
+    consumernumber: "4"
+    retriesnumber: "5"

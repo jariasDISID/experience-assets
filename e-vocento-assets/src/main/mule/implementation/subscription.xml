@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:amqp="http://www.mulesoft.org/schema/mule/amqp" xmlns:vocento-logger-extension="http://www.mulesoft.org/schema/mule/vocento-logger-extension"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/vocento-logger-extension http://www.mulesoft.org/schema/mule/vocento-logger-extension/current/mule-vocento-logger-extension.xsd
+http://www.mulesoft.org/schema/mule/amqp http://www.mulesoft.org/schema/mule/amqp/current/mule-amqp.xsd">
+	<flow name="request-subscription-flow" doc:id="dd2c71ab-316a-49e9-946b-e43d14300ad7" >
+		<vocento-logger-extension:log doc:name="Init flow" doc:id="4b111e12-f6be-49c0-bec8-69814ad9f988" config-ref="Vocento_Logger_Extension_Config" flowName="request-subscription-flow" message="Start request-subscription-flow" />
+		<amqp:publish doc:name="entities.events" doc:id="4cac2d79-cc2c-4e4f-b94d-fc24bd9ee269" config-ref="AMQP_Config" exchangeName="entities.events">
+			<amqp:routing-keys >
+				<amqp:routing-key value="#[vars.routingKey]" />
+			</amqp:routing-keys>
+		</amqp:publish>
+		<vocento-logger-extension:log doc:name="Finish flow" doc:id="59e3e8f3-fefc-43e1-9800-50831c78a46e" config-ref="Vocento_Logger_Extension_Config" flowName="request-subscription-flow" message="Finish request-subscription-flow" />
+	</flow>
+</mule>

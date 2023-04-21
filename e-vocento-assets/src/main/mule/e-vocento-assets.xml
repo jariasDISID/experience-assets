@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:vocento-logger-extension="http://www.mulesoft.org/schema/mule/vocento-logger-extension" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
+http://www.mulesoft.org/schema/mule/vocento-logger-extension http://www.mulesoft.org/schema/mule/vocento-logger-extension/current/mule-vocento-logger-extension.xsd">
+   <flow name="e-vocento-assets-main">
+        <http:listener config-ref="e-vocento-assets-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="e-vocento-assets-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Bad request"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Method not allowed"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not acceptable"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Unsupported media type"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not Implemented"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="e-vocento-assets-console">
+        <http:listener config-ref="e-vocento-assets-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="e-vocento-assets-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="put:\purchases:application\json:e-vocento-assets-config">
+		<vocento-logger-extension:log doc:name="Init flow" doc:id="6c7059be-edd1-4df3-be06-e2a08af3188e" config-ref="Vocento_Logger_Extension_Config" flowName="put:\purchases:application\json:e-vocento-assets-config" message="Start put:\purchases:application\json:e-vocento-assets-config"/>
+		<set-variable value="#[payload]" doc:name="payloadEntrada" doc:id="a3dddf7d-51e9-4c57-9c80-a02174b7a016" variableName="payloadEntrada" />
+		<set-variable value="user.purchase.update" doc:name="routingKey" doc:id="efaeb374-e19f-467a-b68a-3c00be714d2c" variableName="routingKey" />
+		<flow-ref doc:name="request-purchase-flow" doc:id="31e6bd7e-ab6a-457a-81d1-99671626297b" name="request-purchase-flow" />
+		<vocento-logger-extension:log doc:name="Finish flow" doc:id="cf8ba860-cc0b-4681-b991-249bfd86dfd5" config-ref="Vocento_Logger_Extension_Config" flowName="put:\purchases:application\json:e-vocento-assets-config" message="Finish put:\purchases:application\json:e-vocento-assets-config" />
+    </flow>
+    <flow name="put:\subscription:application\json:e-vocento-assets-config">
+        <vocento-logger-extension:log doc:name="Init flow" doc:id="aabfbb67-e746-454f-9bf3-6a1dcdd2bc53" config-ref="Vocento_Logger_Extension_Config" flowName="put:\subscription:application\json:e-vocento-assets-config" message="Start put:\subscription:application\json:e-vocento-assets-config"/>
+		<set-variable value="#[payload]" doc:name="payloadEntrada" doc:id="b6565db9-442e-4a95-b096-28507a31db4f" variableName="payloadEntrada" />
+		<set-variable value="user.subscription.update" doc:name="routingKey" doc:id="86a22b74-8b47-445b-90d8-26d792aac007" variableName="routingKey" />
+		<flow-ref doc:name="request-subscription-flow" doc:id="becbc83f-5e08-4bde-af4e-e031cc4162db" name="request-subscription-flow" />
+		<vocento-logger-extension:log doc:name="Finish flow" doc:id="f8787bcc-b46d-447b-bf1c-a5efcef4e233" config-ref="Vocento_Logger_Extension_Config" flowName="put:\subscription:application\json:e-vocento-assets-config" message="Finish put:\subscription:application\json:e-vocento-assets-config"/>
+    </flow>
+    <flow name="post:\purchases:application\json:e-vocento-assets-config">
+        <vocento-logger-extension:log doc:name="Init flow" doc:id="4d2f0bc4-c8e6-457f-aef1-14f59eb1941e" config-ref="Vocento_Logger_Extension_Config" flowName="post:\purchases:application\json:e-vocento-assets-config" message="Start post:\purchases:application\json:e-vocento-assets-config"/>
+		<set-variable value="#[payload]" doc:name="payloadEntrada" doc:id="7cdd29a8-a770-4622-8785-4f7d4f6590f8" variableName="payloadEntrada"/>
+		<set-variable value="user.purchase.create" doc:name="routingKey" doc:id="fbd9d76c-5204-485f-8ed9-f58c873a443f" variableName="routingKey" />
+		<flow-ref doc:name="request-purchase-flow" doc:id="6bb1b02a-5e29-4732-ab84-7199ebec5d8e" name="request-purchase-flow"/>
+		<vocento-logger-extension:log doc:name="Finish flow" doc:id="c5747e62-3341-4a43-a04c-48ab67e41b48" config-ref="Vocento_Logger_Extension_Config" flowName="post:\purchases:application\json:e-vocento-assets-config" message="Finish post:\purchases:application\json:e-vocento-assets-config"/>
+    </flow>
+    <flow name="post:\subscription:application\json:e-vocento-assets-config">
+        <vocento-logger-extension:log doc:name="Init flow" doc:id="560f78c9-85ca-4538-b04b-d0834442ca64" config-ref="Vocento_Logger_Extension_Config" flowName="post:\subscription:application\json:e-vocento-assets-config" message="Start post:\subscription:application\json:e-vocento-assets-config"/>
+		<set-variable value="#[payload]" doc:name="payloadEntrada" doc:id="60b4d556-3f8e-4f10-8ef5-de68fa422540" variableName="payloadEntrada" />
+		<set-variable value="user.subscription.create" doc:name="routingKey" doc:id="2495e424-df12-4863-a04c-b04a3d85a344" variableName="routingKey" />
+		<flow-ref doc:name="request-subscription-flow" doc:id="16e93f93-8574-4e02-b44f-90b103ffec61" name="request-subscription-flow" />
+		<vocento-logger-extension:log doc:name="Finish flow" doc:id="7b0d8970-2b5e-4a9e-994b-cb73a393cb23" config-ref="Vocento_Logger_Extension_Config" flowName="post:\subscription:application\json:e-vocento-assets-config" message="Finish post:\subscription:application\json:e-vocento-assets-config" />
+    </flow>
+</mule>

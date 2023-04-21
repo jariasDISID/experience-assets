@@ -1,0 +1,22 @@
+##############################################
+##  RabbitMq
+##############################################
+### COMMON CONFIGS
+commonconfig:
+###RABBIT MQ
+  rabbit:
+    host: "premq.vocento.in"
+    port: "5672"
+    virtualhost: "salesforce"
+    user: "sf"
+    password: "![w+DMRvx0eM5x9svF6oVQLQ==]"
+    reconnectionfrequency: "2000"
+    reconnectionattempts: "20"
+    fallback:
+      host: "premq.vocento.in"
+      port: "5672"
+    prefetch:
+     count:  "5"
+     size: "0"
+    consumernumber: "4"
+    retriesnumber: "5"

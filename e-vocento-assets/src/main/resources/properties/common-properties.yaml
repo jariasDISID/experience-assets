@@ -1,0 +1,126 @@
+api:
+  name: "s-vocento-assets"
+  threads: "5"
+  queues:
+    suscriptions: "started"
+    purchase: "started"
+    tracking: "started"
+
+##############################################
+##  Custom Error Handler
+##############################################
+customerrorhandler:
+  mailEnable: "true"
+  hangoutEnable: "true"
+  jiraEnable: "true"
+###       JIRA
+  jira:
+    issuetypes:
+      "1": "1"
+      "2": "1"
+      "default": "1"
+# El id del  tipo de issue cambia por proyecto
+# ID de tipo error para el projecto ITCRMMC = 1
+
+    project: "ITCRMMC"
+    assignee: "Arqu.voc"
+    priorities:
+      "1": "Crítica"
+      "2":  "Alta"
+      "default": "Alta"
+#Names de criticidad en Jira:
+#   1 - Bloqueante
+#   2 - Crítica
+#   3 - Alta
+#   4 - Menor
+#   5 - Trivial
+
+##############################################
+##  Medios
+##############################################
+medio:
+  code0700: "EDIA"
+  code0300: "DSUR"
+  code0600: "ECOR"
+  code0400: "DVAS"
+  code0500: "ECOM"
+  code1200: "LVER"
+  code1100: "LRIO"
+  code0900: "HOY"
+  code1400: "LPRO"
+  code1000: "IDEA"
+  code0800: "ENOR"
+  code0100: "ABC"
+  code2500: "BURG"
+  code3300: "CAN7"
+  code2000: "XGSA"
+  code1800: "XLVG"
+  code1500: "LNOT"
+  code2800: "MADF"
+  code1600: "MHOY"
+  code2900: "TOPC"
+  code3400: "TURI"
+  code3200: "WNOW"
+  code3500: "WELI"
+  code3600: "CMVO"
+  code1300: "LVOZ"
+  code3700: "7CAN"
+  code3800: "SALH"
+  code3900: "TALI"
+  code4100: "HU24"
+  code4200: "LVAV"
+
+##############################################
+##  Magento
+##############################################
+magento:
+  sistemaorigen: "Ecommerce"
+  mediosdepago:
+    creditcard:
+      sistemaorigen: "Ecommerce"
+  address:
+    shipping:
+      addresstype: "Shipping"
+      sistemaorigen: "Ecommerce"
+    billing:
+      addresstype: "Billing"
+      sistemaorigen: "Ecommerce"
+
+##############################################
+##  Oferplan
+##############################################
+oferplan:
+  mediosdepago:
+    creditcard:
+      sistemaorigen: "ExpressionEngine"
+  address:
+    shipping:
+      addresstype: "Shipping"
+      sistemaorigen: "ExpressionEngine"
+    billing:
+      addresstype: "Billing"
+      sistemaorigen: "ExpressionEngine"
+
+##############################################
+##  Home
+##############################################
+home:
+  address:
+    addresstype: "Home"
+
+##############################################
+##  Consentimiento de parte
+##############################################
+consentparty:
+  medio:
+    nivel: "Medio"
+  grupo:
+    nivel: "Grupo"
+  terceros:
+    nivel: "Terceros"
+
+##############################################
+##  HTTP
+##############################################
+http:
+  timeout: "60000"

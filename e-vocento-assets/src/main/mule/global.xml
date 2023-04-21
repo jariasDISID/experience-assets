@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:amqp="http://www.mulesoft.org/schema/mule/amqp"
+	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns:vocento-logger-extension="http://www.mulesoft.org/schema/mule/vocento-logger-extension" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/vocento-logger-extension http://www.mulesoft.org/schema/mule/vocento-logger-extension/current/mule-vocento-logger-extension.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/amqp http://www.mulesoft.org/schema/mule/amqp/current/mule-amqp.xsd">
+    <http:listener-config name="e-vocento-assets-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="${secure::api.http.port}" protocol="HTTPS"/>
+    </http:listener-config>
+    <apikit:config name="e-vocento-assets-config" api="resource::021699be-7747-4638-b809-672d7a6f2ba7:e-vocento-assets:1.0.0:raml:zip:e-vocento-assets.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+	<global-property doc:name="Global Property" doc:id="f0a6a68c-23c7-4162-869b-dc0aaf45d94c" name="env" value="local" />
+	<configuration-properties doc:name="Configuration properties" doc:id="5deacf20-0473-4457-bfe2-e4d659cede6e" file="properties\common-properties.yaml" />
+	<vocento-logger-extension:config name="Vocento_Logger_Extension_Config" doc:name="Vocento Logger Extension Config" doc:id="3906180b-6b64-45ca-b263-69bf869f0af0" appVersion="1.0.0"/>
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="bbe1c0c1-07da-403a-9cbf-183460da1324" file="properties\${env}-properties.yaml" key="${mulekey}">
+		<secure-properties:encrypt algorithm="Blowfish" />
+	</secure-properties:config>
+	<amqp:config name="AMQP_Config" doc:name="AMQP Config" doc:id="3e571cba-3433-4476-8bf1-4db559ba20ec" >
+		<amqp:connection host="${secure::commonconfig.rabbit.host}" port="${secure::commonconfig.rabbit.port}" virtualHost="${secure::commonconfig.rabbit.virtualhost}" username="${secure::commonconfig.rabbit.user}" password="${secure::commonconfig.rabbit.password}">
+			<reconnection >
+				<reconnect frequency="${secure::commonconfig.rabbit.reconnectionfrequency}" count="${secure::commonconfig.rabbit.reconnectionattempts}" />
+			</reconnection>
+		</amqp:connection>
+	</amqp:config>
+</mule>
